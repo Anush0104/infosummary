@@ -8,6 +8,8 @@ __pycache__/
 # Ignore uploads folder if it's just user files
 uploads/
 
+
+
 # Ignore OS files
 .DS_Store
 Thumbs.db
