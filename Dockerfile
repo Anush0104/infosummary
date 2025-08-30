@@ -1,22 +1,31 @@
-# Use a lightweight Python image
+# Use official Python image
 FROM python:3.11-slim
 
-# Install system dependencies like Tesseract OCR and Poppler utils
-RUN apt-get update && \
-    apt-get install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config poppler-utils && \
-    rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PATH="/usr/local/bin:$PATH"
 
-# Set working directory inside container
+# Install system dependencies for pytesseract and PDF/image handling
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Copy all project files to the container
-COPY . /app
+# Copy requirements
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the port (Render uses PORT environment variable)
-ENV PORT=10000
+# Copy app code
+COPY . .
 
-# Command to run the Flask app with Gunicorn
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:$PORT"]
+# Expose port
+EXPOSE 10000
+
+# Start the Flask app
+CMD ["gunicorn", "app:app", "-b", "0.0.0.0:10000"]
