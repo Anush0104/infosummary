@@ -22,16 +22,11 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "bmp", "webp"}
 
-# Initialize summarizer (DistilBART for lower memory usage)
+# Initialize lightweight summarizer
 try:
-    print("Loading DistilBART model... This may take a few minutes on first run.")
-    summarizer = pipeline(
-        "summarization",
-        model="sshleifer/distilbart-cnn-12-6",
-        framework="pt",
-        device=-1  # use CPU
-    )
-    print("✅ Summarizer model loaded successfully!")
+    print("Loading tiny BART model (lightweight)...")
+    summarizer = pipeline("summarization", model="sshleifer/tiny-bart-cnn")
+    print("✅ Tiny BART model loaded successfully!")
 except Exception as e:
     logger.error(f"Failed to load summarizer model: {e}")
     summarizer = None
@@ -86,6 +81,7 @@ def generate_summary(text, length="medium"):
     }
     config = length_config.get(length, length_config["medium"])
 
+    # Split into chunks
     chunk_size = 1000
     chunks = [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
     summaries = []
@@ -146,7 +142,7 @@ def index():
 
 
 @app.route("/summarize", methods=["POST"])
-def summarize():
+def summarize_route():
     try:
         uploaded_file = request.files.get("document")
         length = request.form.get("summary_length", "medium")
@@ -205,4 +201,5 @@ def summarize():
 
 if __name__ == "__main__":
     print("🚀 Starting Flask Document Summarizer...")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Render uses $PORT
+    app.run(debug=True, host="0.0.0.0", port=port)
