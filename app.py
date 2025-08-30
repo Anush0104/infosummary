@@ -27,17 +27,13 @@ try:
     print("Loading lightweight summarization model...")
     summarizer = pipeline(
         "summarization",
-<<<<<<< HEAD
-        model="sshleifer/tiny-bart-cnn",  # Lightweight public model
-=======
-        model="./models/distilbart-cnn-12-6",  
->>>>>>> 2565562 (Add local distilbart model and update app files for deployment)
+        model="./models/distilbart-cnn-12-6",  # Use local model
         framework="pt"
     )
     print("✅ Summarizer model loaded successfully!")
 except Exception as e:
     logger.error(f"Failed to load summarizer model: {e}")
-    summarizer = None  
+    summarizer = None
 
 
 def allowed_file(filename):
