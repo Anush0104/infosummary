@@ -15,23 +15,25 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10MB limit
+app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10MB
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "bmp", "webp"}
 
-# Initialize lightweight summarizer
+# Initialize summarizer
 try:
-    print("Loading tiny BART model (lightweight)...")
-    summarizer = pipeline("summarization", model="sshleifer/tiny-bart-cnn")
-    print("✅ Tiny summarizer model loaded successfully!")
+    print("Loading lightweight summarization model...")
+    summarizer = pipeline(
+        "summarization",
+        model="sshleifer/distilbart-cnn-12-6",  # Lightweight public model
+        framework="pt"
+    )
+    print("✅ Summarizer model loaded successfully!")
 except Exception as e:
     logger.error(f"Failed to load summarizer model: {e}")
-    summarizer = None
-
-
+    summarizer = None  # App will still work without crashing
 
 
 def allowed_file(filename):
@@ -61,7 +63,6 @@ def highlight_keywords(text: str, top_n: int = 5) -> str:
         rake = Rake()
         rake.extract_keywords_from_text(text)
         keywords = [kw for _, kw in rake.get_ranked_phrases_with_scores()[:top_n]]
-
         highlighted = text
         for kw in keywords:
             pattern = re.compile(rf"\b{re.escape(kw)}\b", re.IGNORECASE)
@@ -83,7 +84,6 @@ def generate_summary(text, length="medium"):
     }
     config = length_config.get(length, length_config["medium"])
 
-    # Split into chunks
     chunk_size = 1000
     chunks = [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
     summaries = []
@@ -121,20 +121,16 @@ def suggest_improvements(text: str) -> str:
     suggestions = []
     if len(text.strip()) < 50:
         suggestions.append("The text is too short. Add more details for a meaningful summary.")
-
     sentences = [s.strip() for s in text.split(".") if s.strip()]
     long_sentences = [s for s in sentences if len(s.split()) > 25]
     if long_sentences:
         suggestions.append(f"{len(long_sentences)} sentence(s) are very long. Consider splitting them.")
-
     words = text.lower().split()
     repeated = {w for w in words if words.count(w) > 5 and len(w) > 3}
     if repeated:
         suggestions.append(f"Some words are repeated too often: {', '.join(list(repeated)[:5])}.")
-
     if not suggestions:
         suggestions.append("The text looks clear and concise. ✅")
-
     return "\n".join(suggestions)
 
 
@@ -153,7 +149,7 @@ def summarize_route():
             return render_template("result.html", error="No file uploaded.")
 
         if not allowed_file(uploaded_file.filename):
-            return render_template("result.html", error="Invalid file type. Please upload PDF or image files.")
+            return render_template("result.html", error="Invalid file type. Upload PDF or image.")
 
         filename = secure_filename(uploaded_file.filename)
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
@@ -168,7 +164,7 @@ def summarize_route():
         os.remove(file_path)
 
         if not text.strip():
-            return render_template("result.html", error="No readable text found in the document.")
+            return render_template("result.html", error="No readable text found.")
 
         summary_text = generate_summary(text, length)
         highlighted_summary = highlight_keywords(summary_text, top_n=5)
@@ -203,5 +199,5 @@ def summarize_route():
 
 if __name__ == "__main__":
     print("🚀 Starting Flask Document Summarizer...")
-    port = int(os.environ.get("PORT", 5000))  # Render uses $PORT
+    port = int(os.environ.get("PORT", 5000))  # Use Render's dynamic port
     app.run(debug=True, host="0.0.0.0", port=port)
