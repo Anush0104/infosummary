@@ -22,10 +22,15 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "bmp", "webp"}
 
-# Initialize summarizer
+# Initialize summarizer (DistilBART for lower memory usage)
 try:
-    print("Loading BART model... This may take a few minutes on first run.")
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", framework="pt")
+    print("Loading DistilBART model... This may take a few minutes on first run.")
+    summarizer = pipeline(
+        "summarization",
+        model="sshleifer/distilbart-cnn-12-6",
+        framework="pt",
+        device=-1  # use CPU
+    )
     print("✅ Summarizer model loaded successfully!")
 except Exception as e:
     logger.error(f"Failed to load summarizer model: {e}")
@@ -177,7 +182,6 @@ def summarize():
         summary_words = len(summary_text.split())
         summary_percentage = round((summary_words / total_words) * 100, 2) if total_words else 0
 
-        # ✅ Correct render_template call
         return render_template(
             "result.html",
             original=text[:2000] + "..." if len(text) > 2000 else text,
