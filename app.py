@@ -27,7 +27,7 @@ try:
     print("Loading lightweight summarization model...")
     summarizer = pipeline(
         "summarization",
-        model="sshleifer/distilbart-cnn-12-6",  # Lightweight public model
+        model="sshleifer/tiny-bart-cnn",  # Lightweight public model
         framework="pt"
     )
     print("✅ Summarizer model loaded successfully!")
