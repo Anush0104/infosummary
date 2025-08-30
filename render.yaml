@@ -3,14 +3,16 @@ services:
     name: document-summarizer
     env: python
     plan: free
-    buildCommand: |
-      apt-get update && apt-get install -y \
-        poppler-utils \        # for PDF handling
-        tesseract-ocr \        # for OCR with pytesseract
-        libgl1 \               # for OpenCV
-        libglib2.0-0           # for OpenCV GUI backend
-      pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
+
     envVars:
       - key: PYTHON_VERSION
         value: 3.10
+
+    build:
+      packages:
+        - poppler-utils     # For PDFs
+        - tesseract-ocr     # Required for pytesseract
+        - libgl1            # OpenCV
+        - libglib2.0-0      # OpenCV GUI backend
