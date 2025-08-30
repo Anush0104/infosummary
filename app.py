@@ -24,7 +24,9 @@ ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "bmp", "webp"}
 
 # Initialize lightweight summarizer
 try:
-    summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
+    print("Loading tiny BART model (lightweight)...")
+    summarizer = pipeline("summarization", model="sshleifer/tiny-bart-cnn")
+    print("✅ Tiny summarizer model loaded successfully!")
 except Exception as e:
     logger.error(f"Failed to load summarizer model: {e}")
     summarizer = None
