@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Summarizer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    h1 {
+      color: #222;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .upload-area {
+      border: 2px dashed #6a11cb;
+      padding: 30px;
+      border-radius: 12px;
+      background: #f9f6ff;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .upload-area:hover {
+      background: #f3efff;
+    }
+
+    .upload-area p {
+      margin: 0;
+      font-size: 1rem;
+      color: #444;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-info {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+      word-wrap: break-word;
+    }
+
+    .summary-options {
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 250px;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 🔹 Responsive Media Queries */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .upload-area {
+        padding: 20px;
+      }
+
+      select {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      .upload-area {
+        padding: 15px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📄 Document Summarizer</h1>
+    <form method="POST" action="/summarize" enctype="multipart/form-data">
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('document').click();">
+        <p>Drag & Drop your file here<br>or<br><strong>Click to Browse</strong></p>
+        <input type="file" name="document" id="document" accept=".pdf,.png,.jpg,.jpeg,.gif,.bmp,.webp" required>
+        <div class="file-info" id="fileInfo">
+          Supported formats: PDF, PNG, JPG, JPEG, GIF, BMP, WEBP (Max 10MB)
+        </div>
+      </div>
+
+      <div class="summary-options">
+        <label for="summaryLength"><strong>Choose Summary Length:</strong></label>
+        <select name="summary_length" id="summaryLength" required>
+          <option value="short">Short (30–50 words)</option>
+          <option value="medium">Medium (100–150 words)</option>
+          <option value="long">Long (200–300 words)</option>
+        </select>
+      </div>
+
+      <button type="submit">Generate Summary</button>
+    </form>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("document");
+    const fileInfo = document.getElementById("fileInfo");
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        fileInfo.textContent = "Selected file: " + fileInput.files[0].name;
+      } else {
+        fileInfo.textContent = "Supported formats: PDF, PNG, JPG, JPEG, GIF, BMP, WEBP (Max 10MB)";
+      }
+    });
+  </script>
+</body>
+</html>

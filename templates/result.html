@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Summary Result</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .section h2 {
+      color: #333;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      border-left: 5px solid #2575fc;
+      padding-left: 10px;
+    }
+
+    .original-text,
+    .summary-content {
+      padding: 18px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+      overflow-x: auto; /* for long text in small screens */
+      word-wrap: break-word;
+    }
+
+    .original-text {
+      background: #f5f9ff; 
+      border-left: 4px solid #2575fc;
+    }
+
+    .summary-content {
+      background: #f9f6ff; 
+      border-left: 4px solid #6a11cb;
+    }
+
+    mark {
+      background: #ffe066;
+      padding: 0 4px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    .doc-stats {
+      background: #f1f1f1;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .doc-stats p {
+      margin: 5px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 🔹 Responsive Media Queries */
+    @media (max-width: 900px) {
+      .container {
+        padding: 25px;
+        margin: 10px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .section h2 {
+        font-size: 1.2rem;
+      }
+      .original-text, .summary-content, .doc-stats {
+        font-size: 0.9rem;
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+      .container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .section h2 {
+        font-size: 1.05rem;
+      }
+      .original-text, .summary-content, .doc-stats {
+        font-size: 0.85rem;
+        padding: 12px;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📄 Document Summary Result</h1>
+
+    <div class="section">
+      <h2>Original Text</h2>
+      <div class="original-text">{{ original_highlighted|safe }}</div>
+    </div>
+
+    <div class="section">
+      <h2>Summary</h2>
+      <div class="summary-content">{{ highlighted_summary|safe }}</div>
+    </div>
+
+    <div class="doc-stats">
+      <p><strong>Total Words:</strong> {{ stats.total_words }}</p>
+      <p><strong>Total Characters:</strong> {{ stats.total_chars }}</p>
+      <p><strong>Summary Words:</strong> {{ stats.summary_words }}</p>
+      <p><strong>Summary Coverage:</strong> {{ stats.summary_percentage }}%</p>
+    </div>
+
+    <div class="section">
+      <h2>Improvement Suggestions</h2>
+      <div class="summary-content">{{ improvements or "No suggestions available." }}</div>
+    </div>
+
+    <a href="/" class="btn">⬅ Back</a>
+  </div>
+</body>
+</html>

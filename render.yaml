@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: document-summarizer
+    env: python
+    plan: free   # change to "starter" or "standard" if you want more resources
+    region: oregon  # or frankfurt, singapore etc. (closest to you)
+
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+
+    # Install system-level dependencies
+    build:
+      packages:
+        - poppler-utils     # for PDF handling (PyMuPDF / pdf2image)
+        - tesseract-ocr     # for OCR with pytesseract
+        - libgl1            # for OpenCV
+        - libglib2.0-0      # for OpenCV GUI backend
+
+
