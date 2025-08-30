@@ -190,20 +190,22 @@ def summarize():
         summary_percentage = round((summary_words / total_words) * 100, 2) if total_words else 0
 
         return render_template(
-            "result.html",
-            original=text[:2000] + "..." if len(text) > 2000 else text,
-            original_highlighted=original_highlighted,
-            summary=summary_text,
-            highlighted_summary=highlighted_summary,
-            improvements=improvements,
-            length=length,
-            stats={
-                "total_words": total_words,
-                "total_chars": total_chars,
-                "summary_words": summary_words,
-                "summary_percentage": summary_percentage
-            }
-        )
+       return render_template(
+    "result.html",
+    original=text[:2000] + "..." if len(text) > 2000 else text,
+    original_highlighted=original_highlighted if 'original_highlighted' in locals() else "",
+    summary=summary_text if 'summary_text' in locals() else "",
+    highlighted_summary=highlighted_summary if 'highlighted_summary' in locals() else "",
+    improvements=improvements if 'improvements' in locals() else [],
+    length=length if 'length' in locals() else "medium",
+    stats={
+        "total_words": total_words if 'total_words' in locals() else 0,
+        "total_chars": total_chars if 'total_chars' in locals() else 0,
+        "summary_words": summary_words if 'summary_words' in locals() else 0,
+        "summary_percentage": summary_percentage if 'summary_percentage' in locals() else 0
+    }
+)
+
 
     except Exception as e:
         logger.error(f"Error in processing: {e}")
