@@ -20,7 +20,6 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Allowed file extensions
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "bmp", "webp"}
 
 # Initialize summarizer
@@ -142,11 +141,10 @@ def index():
 
 
 @app.route("/summarize", methods=["POST"])
-@app.route("/summarize", methods=["POST"])
 def summarize():
     try:
         uploaded_file = request.files.get("document")
-        length = request.form.get("summary_length", "medium")  # match dropdown
+        length = request.form.get("summary_length", "medium")
 
         if not uploaded_file or uploaded_file.filename == "":
             return render_template("result.html", error="No file uploaded.")
@@ -169,43 +167,32 @@ def summarize():
         if not text.strip():
             return render_template("result.html", error="No readable text found in the document.")
 
-        # Map length choice to word range
-        if length == "short":
-            target_length = (30, 50)
-        elif length == "medium":
-            target_length = (100, 150)
-        else:
-            target_length = (200, 300)
-
-        # Generate summary and extras
-        summary_text = generate_summary(text, target_length)
+        summary_text = generate_summary(text, length)
         highlighted_summary = highlight_keywords(summary_text, top_n=5)
         improvements = suggest_improvements(summary_text)
         original_highlighted = highlight_keywords(text, top_n=10)
 
-        # ✅ Document stats
         total_words = len(text.split())
         total_chars = len(text)
         summary_words = len(summary_text.split())
         summary_percentage = round((summary_words / total_words) * 100, 2) if total_words else 0
 
+        # ✅ Correct render_template call
         return render_template(
-       return render_template(
-    "result.html",
-    original=text[:2000] + "..." if len(text) > 2000 else text,
-    original_highlighted=original_highlighted if 'original_highlighted' in locals() else "",
-    summary=summary_text if 'summary_text' in locals() else "",
-    highlighted_summary=highlighted_summary if 'highlighted_summary' in locals() else "",
-    improvements=improvements if 'improvements' in locals() else [],
-    length=length if 'length' in locals() else "medium",
-    stats={
-        "total_words": total_words if 'total_words' in locals() else 0,
-        "total_chars": total_chars if 'total_chars' in locals() else 0,
-        "summary_words": summary_words if 'summary_words' in locals() else 0,
-        "summary_percentage": summary_percentage if 'summary_percentage' in locals() else 0
-    }
-)
-
+            "result.html",
+            original=text[:2000] + "..." if len(text) > 2000 else text,
+            original_highlighted=original_highlighted,
+            summary=summary_text,
+            highlighted_summary=highlighted_summary,
+            improvements=improvements,
+            length=length,
+            stats={
+                "total_words": total_words,
+                "total_chars": total_chars,
+                "summary_words": summary_words,
+                "summary_percentage": summary_percentage
+            }
+        )
 
     except Exception as e:
         logger.error(f"Error in processing: {e}")
