@@ -27,8 +27,7 @@ A powerful and user-friendly web application that allows users to upload PDFs or
 
 🚀 Quick Start
 
-- 1. Clone the repo:
-```bash
+- 1. Clone the repo
 git clone https://github.com/Anush0104/infosummary
 cd document-summarizer
 
