@@ -33,30 +33,29 @@ cd document-summarizer
 
 - 2. Create and activate virtual environment:
 
-python -m venv venv
+    python -m venv venv
 
-venv\Scripts\activate
+    venv\Scripts\activate
 
 
 - 3 .Install dependencies:
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
 
 - 4. Install Tesseract OCR:
 
-Windows: Download from UB Mannheim
+    Windows: Download from UB Mannheim
 
-Linux: sudo apt install tesseract-ocr
+    Linux: sudo apt install tesseract-ocr
 
 - 5.Set Tesseract path in app.py (Windows example):
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
 - 6.Run the app:
-
-python app.py
+  python app.py
 
 
 📂 Folder Structure
